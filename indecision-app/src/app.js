@@ -2,50 +2,63 @@ console.log('App.js is running!');
 
 // JSX - JavaScript XML
 
-// CHALLENGE ZONE ************************************************************************************
 const app = {
-  title: 'Progolazo',
+  title: 'Indecision App',
   subtitle: 'The best soccer app',
-  options: ['One', 'Two']
+  options: []
 };
 
-const template = (
-  <div>
-    <h1>{app.title}</h1>
-    {app.subtitle && <p>{app.subtitle}</p>}
-    <p>{app.options.length > 0 ? 'Here are your options:' : 'No options :('}</p>
-    <ol>
-      <li>Item one</li>
-      <li>Item two</li>
-    </ol>
-  </div>
-);
-// END OF CHALLENGE ZONE ************************************************************************************
+const onFormSubmit = e => {
+  e.preventDefault();
 
-let count = 0;
-const addOne = () => {
-  console.log('plusOne');
+  const option = e.target.elements.option.value;
+
+  if (option) {
+    app.options.push(option);
+    e.target.elements.option.value = '';
+    renderIndecisionApp();
+  }
 };
 
-const minusOne = () => {
-  console.log('minusOne');
+const onClearOptions = () => {
+  app.options = [];
+  renderIndecisionApp();
 };
 
-const reset = () => {
-  console.log('reset');
+const onMakeDecision = () => {
+  const randomNum = Math.floor(Math.random() * app.options.length);
+  const option = app.options[randomNum];
+
+  alert(option);
 };
-
-const templateTwo = (
-  <div>
-    <h1>Count: {count}</h1>
-    <button onClick={addOne}>+1</button>
-    <button onClick={minusOne}>-1</button>
-    <button onClick={reset}>reset</button>
-  </div>
-);
-
-console.log(templateTwo);
 
 const appRoot = document.getElementById('app');
 
-ReactDOM.render(templateTwo, appRoot);
+const renderIndecisionApp = () => {
+  const template = (
+    <div>
+      <h1>{app.title}</h1>
+      {app.subtitle && <p>{app.subtitle}</p>}
+      <p>
+        {app.options.length > 0 ? 'Here are your options:' : 'No options :('}
+      </p>
+      <button disabled={app.options.length <= 0} onClick={onMakeDecision}>
+        What should I do?
+      </button>
+      <button onClick={onClearOptions}>Clear Options</button>
+      <ol>
+        {app.options.map((option, index) => (
+          <li key={option}>{`${option}`}</li>
+        ))}
+      </ol>
+      <form onSubmit={onFormSubmit}>
+        <input type='text' name='option' />
+        <button>Add Option</button>
+      </form>
+    </div>
+  );
+
+  ReactDOM.render(template, appRoot);
+};
+
+renderIndecisionApp();

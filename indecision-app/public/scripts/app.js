@@ -4,89 +4,91 @@ console.log('App.js is running!');
 
 // JSX - JavaScript XML
 
-// CHALLENGE ZONE ************************************************************************************
 var app = {
-  title: 'Progolazo',
+  title: 'Indecision App',
   subtitle: 'The best soccer app',
-  options: ['One', 'Two']
+  options: []
 };
 
-var template = React.createElement(
-  'div',
-  null,
-  React.createElement(
-    'h1',
-    null,
-    app.title
-  ),
-  app.subtitle && React.createElement(
-    'p',
-    null,
-    app.subtitle
-  ),
-  React.createElement(
-    'p',
-    null,
-    app.options.length > 0 ? 'Here are your options:' : 'No options :('
-  ),
-  React.createElement(
-    'ol',
-    null,
-    React.createElement(
-      'li',
-      null,
-      'Item one'
-    ),
-    React.createElement(
-      'li',
-      null,
-      'Item two'
-    )
-  )
-);
-// END OF CHALLENGE ZONE ************************************************************************************
+var onFormSubmit = function onFormSubmit(e) {
+  e.preventDefault();
 
-var count = 0;
-var addOne = function addOne() {
-  console.log('plusOne');
+  var option = e.target.elements.option.value;
+
+  if (option) {
+    app.options.push(option);
+    e.target.elements.option.value = '';
+    renderIndecisionApp();
+  }
 };
 
-var minusOne = function minusOne() {
-  console.log('minusOne');
+var onClearOptions = function onClearOptions() {
+  app.options = [];
+  renderIndecisionApp();
 };
 
-var reset = function reset() {
-  console.log('reset');
+var onMakeDecision = function onMakeDecision() {
+  var randomNum = Math.floor(Math.random() * app.options.length);
+  var option = app.options[randomNum];
+
+  alert(option);
 };
-
-var templateTwo = React.createElement(
-  'div',
-  null,
-  React.createElement(
-    'h1',
-    null,
-    'Count: ',
-    count
-  ),
-  React.createElement(
-    'button',
-    { onClick: addOne },
-    '+1'
-  ),
-  React.createElement(
-    'button',
-    { onClick: minusOne },
-    '-1'
-  ),
-  React.createElement(
-    'button',
-    { onClick: reset },
-    'reset'
-  )
-);
-
-console.log(templateTwo);
 
 var appRoot = document.getElementById('app');
 
-ReactDOM.render(templateTwo, appRoot);
+var renderIndecisionApp = function renderIndecisionApp() {
+  var template = React.createElement(
+    'div',
+    null,
+    React.createElement(
+      'h1',
+      null,
+      app.title
+    ),
+    app.subtitle && React.createElement(
+      'p',
+      null,
+      app.subtitle
+    ),
+    React.createElement(
+      'p',
+      null,
+      app.options.length > 0 ? 'Here are your options:' : 'No options :('
+    ),
+    React.createElement(
+      'button',
+      { disabled: app.options.length <= 0, onClick: onMakeDecision },
+      'What should I do?'
+    ),
+    React.createElement(
+      'button',
+      { onClick: onClearOptions },
+      'Clear Options'
+    ),
+    React.createElement(
+      'ol',
+      null,
+      app.options.map(function (option, index) {
+        return React.createElement(
+          'li',
+          { key: option },
+          '' + option
+        );
+      })
+    ),
+    React.createElement(
+      'form',
+      { onSubmit: onFormSubmit },
+      React.createElement('input', { type: 'text', name: 'option' }),
+      React.createElement(
+        'button',
+        null,
+        'Add Option'
+      )
+    )
+  );
+
+  ReactDOM.render(template, appRoot);
+};
+
+renderIndecisionApp();
