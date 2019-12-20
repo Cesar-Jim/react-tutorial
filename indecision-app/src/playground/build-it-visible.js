@@ -1,28 +1,67 @@
-let details = false;
+class VisibilityToggle extends React.Component {
+  constructor(props) {
+    super(props);
 
-const onToggle = () => {
-  details = !details;
-  console.log('clicked!');
+    this.handleToggleVisibility = this.handleToggleVisibility.bind(this);
 
-  visibilityApp();
-};
+    this.state = {
+      visibility: false
+    };
+  }
 
-const visibilityApp = () => {
-  const template = (
-    <div>
-      <h1>Visibility Toggle</h1>
-      <button onClick={onToggle}>
-        {details ? 'Hide details' : 'Show details'}
-      </button>
-      {details && (
-        <div>
-          <p>Hey. These are some details you can now see!</p>
-        </div>
-      )}
-    </div>
-  );
+  handleToggleVisibility() {
+    this.setState(prevState => {
+      return {
+        visibility: !prevState.visibility
+      };
+    });
+  }
 
-  ReactDOM.render(template, document.getElementById('app'));
-};
+  render() {
+    return (
+      <div>
+        <h1>Visibility App</h1>
+        <button onClick={this.handleToggleVisibility}>
+          {this.state.visibility ? 'Hide details' : 'Show details'}
+        </button>
+        {this.state.visibility && (
+          <div>
+            <p>These are the details</p>
+          </div>
+        )}
+      </div>
+    );
+  }
+}
 
-visibilityApp();
+ReactDOM.render(<VisibilityToggle />, document.getElementById('app'));
+
+// ******************************* BASIC EXAMPLE (NO REACT COMPONENT)
+// let details = false;
+
+// const onToggle = () => {
+//   details = !details;
+//   console.log('clicked!');
+
+//   visibilityApp();
+// };
+
+// const visibilityApp = () => {
+//   const template = (
+//     <div>
+//       <h1>Visibility Toggle</h1>
+//       <button onClick={onToggle}>
+//         {details ? 'Hide details' : 'Show details'}
+//       </button>
+//       {details && (
+//         <div>
+//           <p>Hey. These are some details you can now see!</p>
+//         </div>
+//       )}
+//     </div>
+//   );
+
+//   ReactDOM.render(template, document.getElementById('app'));
+// };
+
+// visibilityApp();
