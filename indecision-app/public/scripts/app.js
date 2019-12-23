@@ -17,24 +17,82 @@ var IndecisionApp = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (IndecisionApp.__proto__ || Object.getPrototypeOf(IndecisionApp)).call(this, props));
 
     _this.handleDeleteOptions = _this.handleDeleteOptions.bind(_this);
+    _this.handleDeleteOption = _this.handleDeleteOption.bind(_this);
     _this.handlePick = _this.handlePick.bind(_this);
     _this.handleAddOption = _this.handleAddOption.bind(_this);
 
     _this.state = {
-      options: props.options
+      options: []
     };
     return _this;
   }
 
-  // handleDeleteOptions
+  // componentDidMount
 
 
   _createClass(IndecisionApp, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      try {
+        var json = localStorage.getItem('options');
+        var options = JSON.parse(json);
+
+        if (options) {
+          this.setState(function () {
+            return {
+              options: options
+            };
+          });
+        }
+      } catch (e) {
+        // do nothing at all
+      }
+    }
+
+    // componentDidUpdate
+
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate(prevProps, prevState) {
+      // we have acces to this.props & this.state for the new state
+      if (prevState.options.length !== this.state.options.length) {
+        var json = JSON.stringify(this.state.options);
+
+        localStorage.setItem('options', json);
+      }
+    }
+
+    // componentWillUnmount
+
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      // normally used for clean-up tasks
+      console.log('componentWillUnmount(');
+    }
+
+    // handleDeleteOptions
+
+  }, {
     key: 'handleDeleteOptions',
     value: function handleDeleteOptions() {
       this.setState(function () {
         return {
           options: []
+        };
+      });
+    }
+
+    // handleDeleteOption
+
+  }, {
+    key: 'handleDeleteOption',
+    value: function handleDeleteOption(optionToRemove) {
+      this.setState(function (prevState) {
+        return {
+          options: prevState.options.filter(function (option) {
+            return optionToRemove !== option;
+          })
         };
       });
     }
@@ -88,6 +146,7 @@ var IndecisionApp = function (_React$Component) {
         }),
         React.createElement(Options, {
           handleDeleteOptions: this.handleDeleteOptions,
+          handleDeleteOption: this.handleDeleteOption,
           options: this.state.options
         }),
         React.createElement(AddOption, { handleAddOption: this.handleAddOption })
@@ -97,10 +156,6 @@ var IndecisionApp = function (_React$Component) {
 
   return IndecisionApp;
 }(React.Component);
-
-IndecisionApp.defaultProps = {
-  options: []
-};
 
 var Header = function Header(props) {
   return React.createElement(
@@ -144,8 +199,17 @@ var Options = function Options(props) {
       { onClick: props.handleDeleteOptions },
       'Remove all'
     ),
+    props.options.length === 0 && React.createElement(
+      'p',
+      null,
+      'Please add an option to get started!'
+    ),
     props.options.map(function (option) {
-      return React.createElement(Option, { key: option, optionText: option });
+      return React.createElement(Option, {
+        key: option,
+        optionText: option,
+        handleDeleteOption: props.handleDeleteOption
+      });
     })
   );
 };
@@ -154,7 +218,14 @@ var Option = function Option(props) {
   return React.createElement(
     'div',
     null,
-    props.optionText
+    props.optionText,
+    React.createElement(
+      'button',
+      { onClick: function onClick(e) {
+          return props.handleDeleteOption(props.optionText);
+        } },
+      'remove'
+    )
   );
 };
 
@@ -181,13 +252,15 @@ var AddOption = function (_React$Component2) {
       var option = e.target.elements.option.value.trim();
       var error = this.props.handleAddOption(option);
 
-      e.target.elements.option.value = '';
-
       this.setState(function () {
         return {
           error: error
         };
       });
+
+      if (!error) {
+        e.target.elements.option.value = '';
+      }
     }
   }, {
     key: 'render',
