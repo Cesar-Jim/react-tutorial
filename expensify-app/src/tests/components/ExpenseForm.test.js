@@ -3,6 +3,7 @@ import { shallow } from 'enzyme';
 import moment from 'moment';
 import ExpenseForm from '../../components/ExpenseForm';
 import expenses from '../fixtures/expenses';
+import { setTextFilter } from '../../actions/filters';
 
 test('should render expense form correctly', () => {
   const wrapper = shallow(<ExpenseForm />);
@@ -18,7 +19,7 @@ test('should render error for invalid form submission', () => {
   const wrapper = shallow(<ExpenseForm />);
   expect(wrapper).toMatchSnapshot();
   wrapper.find('form').simulate('submit', {
-    preventDefault: () => {},
+    preventDefault: () => {}
   });
   expect(wrapper.state('error').length).toBeGreaterThan(0);
   expect(wrapper).toMatchSnapshot();
@@ -64,17 +65,17 @@ test('should not set amount if invalid input', () => {
 test('should call onSubmit prop for valid form submission', () => {
   const onSubmitSpy = jest.fn();
   const wrapper = shallow(
-    <ExpenseForm expense={expenses[0]} onSubmit={onSubmitSpy} />,
+    <ExpenseForm expense={expenses[0]} onSubmit={onSubmitSpy} />
   );
   wrapper.find('form').simulate('submit', {
-    preventDefault: () => {},
+    preventDefault: () => {}
   });
   expect(wrapper.state('error')).toBe('');
   expect(onSubmitSpy).toHaveBeenCalledWith({
     description: expenses[0].description,
     amount: expenses[0].amount,
     note: expenses[0].note,
-    createdAt: expenses[0].createdAt,
+    createdAt: expenses[0].createdAt
   });
 });
 
